@@ -1,15 +1,18 @@
-name: "Velocity (HTML)"
-scopeName: "source.velocity.html"
-fileTypes: [ "vm", "vm.html" ]
-patterns: [
-  {
-    begin: "<!--"
-    end: "-->"
-    name: "punctuation.definition.comment.velocity"
-    patterns: [
-      { include: "$self" }
+'name': 'Velocity (HTML)'
+'scopeName': 'text.html.velocity'
+'fileTypes': [
+  'vm',
+  'vm.html'
+]
+'injections':
+  'text.html.velocity - (meta.embedded | meta.tag | source.velocity), L:((text.html.velocity meta.tag) - source.velocity), L:(source.js.embedded.html - source.velocity)':
+    'patterns': [
+      {
+        'include': 'source.velocity'
+      }
     ]
+'patterns': [
+  {
+    'include': 'text.html.basic'
   }
-  { include: "source.velocity" }
-  { include: "text.html.basic" }
 ]

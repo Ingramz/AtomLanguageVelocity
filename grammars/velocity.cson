@@ -2,14 +2,12 @@ name: "Velocity"
 scopeName: "source.velocity"
 fileTypes: [ "vm" ]
 patterns: [
-  { include: "#operators" }
   { include: "#comments" }
-  { include: "#constants" }
   { include: "#blocks" }
   { include: "#variables" }
 ]
 repository:
-  blocks:
+  parens:
     patterns: [
       {
         begin: "\\("
@@ -17,13 +15,30 @@ repository:
         patterns: [
           { include: '#strings_double_quote' }
           { include: '#strings_single_quote' }
+          { include: "#operators" }
+          { include: "#constants" }
           { include: '$self' }
         ]
       }
+    ]
+  blocks:
+    patterns: [
       {
-        match: "(#\\{?(?:set|foreach|if|else(?:if)?|define|end|include|parse|evaluate|stop|break)\\}?)"
+        begin: "#[{]?(?:set|foreach|if|elseif|define|include|parse|evaluate)[}]?"
+        end: '(?<=[)])'
+        beginCaptures:
+          0:
+            name: "keyword.control.velocity"
+        patterns: [
+          {
+            include: '#parens'
+          }
+        ]
+      }
+      {
+        match: "#[{]?(?:else|end|stop|break)[}]?"
         captures:
-          1:
+          0:
             name: "keyword.control.velocity"
       }
       {
@@ -105,12 +120,13 @@ repository:
   strings_double_quote:
     patterns: [
       {
-        begin: "\\\""
-        end: "\\\""
+        begin: '"'
+        end: '"'
         name: "string.quoted.double.velocity"
+        applyEndPatternLast: 1
         patterns: [
           {
-            match: "\\\\\""
+            match: '""'
             name: "constant.character.escape.velocity"
           }
           { include: "#variables" }
@@ -122,10 +138,11 @@ repository:
       {
         begin: "'"
         end: "'"
+        applyEndPatternLast: 1
         name: "string.quoted.single.velocity"
         patterns: [
           {
-            match: "\\'"
+            match: "''"
             name: "constant.character.escape.velocity"
           }
         ]
